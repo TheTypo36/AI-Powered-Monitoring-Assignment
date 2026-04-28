@@ -14,12 +14,19 @@ import {
 } from "recharts";
 import { TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import "./index.css";
-
-const API_URL =
-  process.env.NODE_ENV == "development"
-    ? "http://localhost:8085"
-    : "https://ai-powered-monitoring-assignment.onrender.com";
-const API_BASE = "http://localhost:8085/api/v1/metrics";
+const getApiUrl = (): string => {
+  // If running on Vercel or any deployed domain (not localhost)
+  if (
+    typeof window !== "undefined" &&
+    window.location.hostname !== "localhost"
+  ) {
+    return "https://ai-powered-monitoring-assignment.onrender.com";
+  }
+  // Local development
+  return "http://localhost:8085";
+};
+const API_URL = getApiUrl();
+const API_BASE = `${API_URL}/api/v1/metrics`;
 
 interface WorkerMetrics {
   workerId: string;
