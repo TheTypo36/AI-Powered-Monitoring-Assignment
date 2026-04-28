@@ -15,6 +15,10 @@ import {
 import { TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import "./index.css";
 
+const API_URL =
+  process.env.NODE_ENV == "development"
+    ? "http://localhost:8085"
+    : "https://ai-powered-monitoring-assignment.onrender.com";
 const API_BASE = "http://localhost:8085/api/v1/metrics";
 
 interface WorkerMetrics {
