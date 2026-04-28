@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Worker{
+  id           String @id
+  name         String
+  events        Event[]
+  createdAt     DateTime @default(now())
+}
+
+model   Workstation{
+  id              String @id
+  name            String
+
+  events        Event[]
+  createdAt     DateTime @default(now())
+
+
+}
+
+model Event {
+  id             String   @id @default(uuid())
+
+  timestamp      DateTime
+  workerId       String
+  workstationId  String
+
+  eventType      EventType
+  confidence     Float?
+  count          Int?      
+  
+  modelVersion   String?   
+  source         String?   
+
+  createdAt      DateTime  @default(now())
+
+  worker         Worker     @relation(fields: [workerId], references: [id])
+  workstation    Workstation @relation(fields: [workstationId], references: [id])
+
+  @@index([workerId, timestamp])
+  @@index([workstationId, timestamp])
+
+  @@unique([workerId, timestamp, eventType])
+}
+
+enum EventType{
+  working
+  idle
+  absent
+  product_count
+}
