@@ -9,7 +9,10 @@ app.use(urlencoded());
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // your frontend URL
+    origin: [
+      "http://localhost:3000",
+      "https://ai-powered-monitoring-assignment.vercel.app",
+    ], // your frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),
