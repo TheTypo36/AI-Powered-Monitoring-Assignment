@@ -29,11 +29,11 @@ fi
 
 # Run Prisma migrations
 echo "Running Prisma migrations..."
-bun exec prisma migrate deploy || bun exec prisma db push
+bunx prisma migrate deploy || bunx prisma db push
 
 # Seed the database with initial data
 echo "Seeding database with initial data..."
-bun exec prisma db seed 2>/dev/null || echo "Note: Seed script not found or already executed"
+bunx prisma db seed 2>/dev/null || echo "Note: Seed script not found or already executed"
 
 # Start the application
 echo "Starting application server..."

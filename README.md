@@ -195,6 +195,7 @@ cd ai-powered-worker
 # - Backend API with auto-seeding
 # - Frontend React app
 docker-compose up
+curl -X POST "http://localhost:8085/api/v1/seed/seed-data
 
 # Wait for all services to be healthy (~30 seconds)
 # Then access:

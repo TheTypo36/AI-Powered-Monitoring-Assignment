@@ -4,8 +4,7 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest",
-    "prisma": "7"
+    "@types/bun": "latest"
   },
   "scripts": {
     "dev": "bun index.ts",
@@ -15,6 +14,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "prisma": "7",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "7",
     "@types/cors": "^2.8.19",
