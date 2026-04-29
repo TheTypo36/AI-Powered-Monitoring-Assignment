@@ -8,7 +8,8 @@
     "prisma": "7"
   },
   "scripts": {
-    "dev": "bun index.ts"
+    "dev": "bun index.ts",
+    "seed": "bun exec prisma db seed"
   },
   "peerDependencies": {
     "typescript": "^5"

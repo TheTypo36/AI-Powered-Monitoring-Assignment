@@ -27,13 +27,19 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
-          "pg_isready -U ${DB_USER:-ai-camera} -d ${DB_NAME:-aiPostgres}",
+          "CMD",
+          "pg_isready",
+          "-h",
+          "postgres",
+          "-U",
+          "${DB_USER:-ai-camera}",
+          "-d",
+          "${DB_NAME:-aiPostgres}",
         ]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 10s
+      start_period: 20s
 
     # Network
     networks:
@@ -66,6 +72,9 @@ services:
     environment:
       NODE_ENV: production
       PORT: 8085
+      DB_USER: ${DB_USER:-ai-camera}
+      DB_PASSWORD: ${DB_PASSWORD:-ai-camera}
+      DB_NAME: ${DB_NAME:-aiPostgres}
       DATABASE_URL: postgresql://${DB_USER:-ai-camera}:${DB_PASSWORD:-ai-camera}@postgres:5432/${DB_NAME:-aiPostgres}
 
     # Port mapping
@@ -105,6 +114,59 @@ services:
         reservations:
           cpus: "1"
           memory: 1G
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfile
+    container_name: ai-factory-frontend
+    restart: unless-stopped
+
+    # Depends on backend
+    depends_on:
+      backend:
+        condition: service_healthy
+
+    # Environment variables
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      VITE_API_URL: http://backend:8085
+
+    # Port mapping
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+
+    # Health check
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000/",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+    # Network
+    networks:
+      - factory-network
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
 
 # Named volumes for data persistence
 volumes:

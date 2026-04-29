@@ -29,6 +29,8 @@ import workstationRouter from "./Routers/workstation";
 app.use("/api/v1/workstations", workstationRouter);
 import metricsRouter from "./Routers/metricsRoute";
 app.use("/api/v1/metrics", metricsRouter);
+import eventRouter from "./Routers/eventRoute";
+app.use("/api/v1/events", eventRouter);
 app.listen(port, () => {
   console.log(`server is running at port ${port}`);
 });

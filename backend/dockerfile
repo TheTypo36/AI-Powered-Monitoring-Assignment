@@ -24,21 +24,28 @@ ENV NODE_ENV=production \
     PORT=8085 \
     DATABASE_URL=postgresql://ai-camera:ai-camera@localhost:5443/aiPostgres
 
+# Install postgresql-client for health checks and database connection
+RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
+
 # Create non-root user for security
 RUN groupadd -r bunapp && useradd -r -g bunapp bunapp
 
 # Copy from builder stage
 COPY --from=builder --chown=bunapp:bunapp /app .
 
+# Copy startup script
+COPY --chown=bunapp:bunapp start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
 # Expose port
 EXPOSE 8085
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD bun run --eval "const response = await fetch('http://localhost:8085'); console.log(response.status === 200 ? 'OK' : 'FAIL'); process.exit(response.status === 200 ? 0 : 1);" || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+    CMD pg_isready -h postgres -U ${DB_USER:-ai-camera} -d ${DB_NAME:-aiPostgres} || exit 1
 
 # Switch to non-root user
 USER bunapp
 
-# Default command
-CMD ["bun", "index.ts"]
+# Use startup script
+CMD ["/app/start.sh"]
